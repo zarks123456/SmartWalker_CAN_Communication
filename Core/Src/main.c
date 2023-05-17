@@ -118,15 +118,46 @@ int main(void) {
 
 	uint8_t reset[] = { 01, 82 };
 	HAL_CAN_AddTxMessage(&hcan, &TxHeader, reset, &TxMailbox);
-	uint8_t operationalmode[] = { 01, 01 };
-	//uint8_t enablemotor[] = { 0x2B, 0x40, 0x60, 0x00, 0x06, 0x00, 0x00, 0x00 };// enable motor
-	//2B 40 60 00 06 00 00 00
-	HAL_CAN_AddTxMessage(&hcan, &TxHeader, operationalmode, &TxMailbox);
 
-//	TxHeader.DLC = 8;
-//	TxHeader.StdId = 0x601;
-//	uint8_t heartbeat[] = { 0x2B, 0x17, 0x10, 0x00, 0xE8, 0x03, 0x00, 0x00 };// set heart beat rate
-//	HAL_CAN_AddTxMessage(&hcan, &TxHeader, heartbeat, &TxMailbox);
+	uint8_t operationalmode[] = { 01, 01 };
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, operationalmode, &TxMailbox);
+	HAL_Delay(1000);
+
+	TxHeader.DLC = 8;
+	TxHeader.StdId = 0x601;
+	uint8_t synchronousMode[] = { 0x2B, 0x0F, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t velocityMode[] = { 0x2F, 0x60, 0x60, 0x00, 0x03, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t accOfLeftMotor[] = { 0x23, 0x83, 0x60, 0x01, 0x64, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t accOfRightMotor[] = { 0x23, 0x83, 0x60, 0x02, 0x64, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t decOfLeftMotor[] = { 0x23, 0x84, 0x60, 0x01, 0x64, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t decOfRightMotor[] = { 0x23, 0x84, 0x60, 0x02, 0x64, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t enable1[] = { 0x2B, 0x40, 0x60, 0x00, 0x06, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t enable2[] = { 0x2B, 0x40, 0x60, 0x00, 0x07, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t enable3[] = { 0x2B, 0x40, 0x60, 0x00, 0x0F, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t speedOfLeftMotor[] = { 0x23, 0xFF, 0x60, 0x01, 0x0A, 0x00, 0x00, 0x00 };// set asynchronous mode
+	//uint8_t speedOfRightMotor[] = { 0x23, 0xFF, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set asynchronous mode
+	uint8_t stopLeftMotor[] = { 0x2B, 0x40, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00 };// set asynchronous mode
+
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, synchronousMode, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, velocityMode, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, accOfLeftMotor, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, accOfRightMotor, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, decOfLeftMotor, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, decOfRightMotor, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, enable1, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, enable2, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, enable3, &TxMailbox);
+	HAL_Delay(1000);
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, speedOfLeftMotor, &TxMailbox);
+	HAL_Delay(5000);
 
 //	TxHeader.DLC = 8;
 //	TxHeader.StdId = 0x601;
@@ -140,13 +171,14 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		TxHeader.DLC = 8;
-		TxHeader.StdId = 0x601;
-		uint8_t speed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
-		HAL_CAN_AddTxMessage(&hcan, &TxHeader, speed, &TxMailbox);
-		//HAL_UART_Transmit(&huart1, "Test\r\n", 8, 100);
-		//printf("Test\r\n");
-		HAL_Delay(1000);
+		HAL_Delay(10000);
+		HAL_CAN_AddTxMessage(&hcan, &TxHeader, stopLeftMotor, &TxMailbox);
+
+//		TxHeader.DLC = 8;
+//		TxHeader.StdId = 0x601;
+//		uint8_t speed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
+//		HAL_CAN_AddTxMessage(&hcan, &TxHeader, speed, &TxMailbox);
+//		HAL_Delay(1000);
 	}
 	/* USER CODE END 3 */
 }
