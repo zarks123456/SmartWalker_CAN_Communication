@@ -41,6 +41,8 @@
 /* Private variables ---------------------------------------------------------*/
 CAN_HandleTypeDef hcan;
 
+UART_HandleTypeDef huart1;
+
 /* USER CODE BEGIN PV */
 CAN_TxHeaderTypeDef TxHeader;
 CAN_RxHeaderTypeDef RxHeader;
@@ -49,18 +51,24 @@ uint8_t TxData[8];
 uint8_t RxData[8];
 
 uint32_t TxMailbox;
+
+char message[100];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_CAN_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
-	if (RxHeader.DLC == 2) {
-		//datacheck=1;
-	}
+
+	int j=0;
+	j = sprintf(message, "%s ", "Speed");
+	j += sprintf(message+j, "%d \r\n", RxData[4]);
+
+	HAL_UART_Transmit(&huart1,(uint8_t *)message,strlen(message),100);
 }
 /* USER CODE END PFP */
 
@@ -97,6 +105,7 @@ int main(void) {
 	/* Initialize all configured peripherals */
 	MX_GPIO_Init();
 	MX_CAN_Init();
+	MX_USART1_UART_Init();
 	/* USER CODE BEGIN 2 */
 	HAL_CAN_Start(&hcan);
 
@@ -107,15 +116,22 @@ int main(void) {
 	TxHeader.RTR = CAN_RTR_DATA;
 	TxHeader.StdId = 0x000;
 
-	uint8_t operationalmode[]={01,01};
+	uint8_t reset[] = { 01, 82 };
+	HAL_CAN_AddTxMessage(&hcan, &TxHeader, reset, &TxMailbox);
+	uint8_t operationalmode[] = { 01, 01 };
 	//uint8_t enablemotor[] = { 0x2B, 0x40, 0x60, 0x00, 0x06, 0x00, 0x00, 0x00 };// enable motor
 	//2B 40 60 00 06 00 00 00
 	HAL_CAN_AddTxMessage(&hcan, &TxHeader, operationalmode, &TxMailbox);
 
-	TxHeader.DLC = 8;
-	TxHeader.StdId = 0x601;
-	uint8_t heartbeat[]={ 0x2B, 0x17, 0x10, 0x00, 0xE8, 0x03, 0x00, 0x00 };// set heart beat rate
-	HAL_CAN_AddTxMessage(&hcan, &TxHeader, heartbeat, &TxMailbox);
+//	TxHeader.DLC = 8;
+//	TxHeader.StdId = 0x601;
+//	uint8_t heartbeat[] = { 0x2B, 0x17, 0x10, 0x00, 0xE8, 0x03, 0x00, 0x00 };// set heart beat rate
+//	HAL_CAN_AddTxMessage(&hcan, &TxHeader, heartbeat, &TxMailbox);
+
+//	TxHeader.DLC = 8;
+//	TxHeader.StdId = 0x601;
+//	uint8_t speed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
+//	HAL_CAN_AddTxMessage(&hcan, &TxHeader, heartbeat, &TxMailbox);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -124,6 +140,13 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		TxHeader.DLC = 8;
+		TxHeader.StdId = 0x601;
+		uint8_t speed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
+		HAL_CAN_AddTxMessage(&hcan, &TxHeader, speed, &TxMailbox);
+		//HAL_UART_Transmit(&huart1, "Test\r\n", 8, 100);
+		//printf("Test\r\n");
+		HAL_Delay(1000);
 	}
 	/* USER CODE END 3 */
 }
@@ -209,6 +232,37 @@ static void MX_CAN_Init(void) {
 
 	HAL_CAN_ConfigFilter(&hcan, &canfilterconfig);
 	/* USER CODE END CAN_Init 2 */
+
+}
+
+/**
+ * @brief USART1 Initialization Function
+ * @param None
+ * @retval None
+ */
+static void MX_USART1_UART_Init(void) {
+
+	/* USER CODE BEGIN USART1_Init 0 */
+
+	/* USER CODE END USART1_Init 0 */
+
+	/* USER CODE BEGIN USART1_Init 1 */
+
+	/* USER CODE END USART1_Init 1 */
+	huart1.Instance = USART1;
+	huart1.Init.BaudRate = 115200;
+	huart1.Init.WordLength = UART_WORDLENGTH_8B;
+	huart1.Init.StopBits = UART_STOPBITS_1;
+	huart1.Init.Parity = UART_PARITY_NONE;
+	huart1.Init.Mode = UART_MODE_TX_RX;
+	huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+	huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+	if (HAL_UART_Init(&huart1) != HAL_OK) {
+		Error_Handler();
+	}
+	/* USER CODE BEGIN USART1_Init 2 */
+
+	/* USER CODE END USART1_Init 2 */
 
 }
 
