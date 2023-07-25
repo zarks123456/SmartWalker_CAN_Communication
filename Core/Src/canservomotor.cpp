@@ -32,6 +32,8 @@ void CANServoMotor::StartCommand() {
 	HAL_CAN_AddTxMessage(hcan, &txHeader, operationalmode, &txMailbox);
 }
 
+
+
 void CANServoMotor::GetVelocity() {
 	txHeader.DLC = 8;
 	txHeader.StdId = 0x601;
@@ -58,31 +60,19 @@ CANServoMotor::Data CANServoMotor::ParseData(uint8_t *rxData,
 
 bool CANServoMotor::parseVelocity(uint8_t *rxData, int &leftVelocity,
 		int &rightVelocity) {
-	uint8_t dataLengthCode = rxData[0];
-	uint8_t dataLength;
-	switch (dataLengthCode) {
-	case 0x4F:
-		dataLength = 1;
-		break;
-	case 0x4B:
-		dataLength = 2;
-		break;
-	case 0x47:
-		dataLength = 3;
-		break;
-	case 0x43:
-		dataLength = 4;
-		break;
-	case 128:
-		dataLength = 5;
-		break;
-	default:
-		dataLength = 10; // Return -1 if the input is not recognized
-	}
-
 	if (rxData[0] == 0x43) {
-		leftVelocity = (rxData[5] << 8) | rxData[4];
-		rightVelocity = (rxData[7] << 8) | rxData[6];
+		switch (rxData[3]){
+			case 0x01:
+				this->LeftVelocity= ((static_cast<int32_t>(rxData[7]) << 24) | (rxData[6] << 16)
+				| (rxData[5] << 8) | rxData[4])*0.1;
+				break;
+			case 0x02:
+				this->RightVelocity=((static_cast<int32_t>(rxData[7]) << 24) | (rxData[6] << 16)
+						| (rxData[5] << 8) | rxData[4])*0.1;
+				break;
+		}
+		leftVelocity=0;
+		rightVelocity=0;
 	} else {
 		// Invalid data length, set default values
 		leftVelocity = 0;

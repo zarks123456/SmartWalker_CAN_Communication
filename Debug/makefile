@@ -76,7 +76,7 @@ main-build: CAN_F103_Motor.elf secondary-outputs
 
 # Tool invocations
 CAN_F103_Motor.elf CAN_F103_Motor.map: $(OBJS) $(USER_OBJS) C:\Users\jcheng9\OneDrive\ -\ Kent\ State\ University\KSU\Research\Smart\ walker\ 2023\Code\CAN_F103_Motor\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "CAN_F103_Motor.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\jcheng9\OneDrive - Kent State University\KSU\Research\Smart walker 2023\Code\CAN_F103_Motor\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CAN_F103_Motor.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+	arm-none-eabi-g++ -o "CAN_F103_Motor.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"C:\Users\jcheng9\OneDrive - Kent State University\KSU\Research\Smart walker 2023\Code\CAN_F103_Motor\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="CAN_F103_Motor.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

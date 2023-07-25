@@ -13,6 +13,9 @@ public:
 	void StartCommand();
 	void GetVelocity();
 	void Init(CAN_HandleTypeDef *hcan);
+	
+	double LeftVelocity;
+	double RightVelocity;
 
 private:
 	uint8_t motorID;
