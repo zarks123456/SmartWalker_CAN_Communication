@@ -21,7 +21,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <string.h>
+#include "canservomotor.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -44,6 +46,9 @@ CAN_HandleTypeDef hcan;
 UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
+CANServoMotor controller(1);
+CANServoMotor::Data canData;
+
 CAN_TxHeaderTypeDef TxHeader;
 CAN_RxHeaderTypeDef RxHeader;
 
@@ -64,11 +69,14 @@ static void MX_USART1_UART_Init(void);
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
 
-	int j=0;
-	j = sprintf(message, "%s ", "Speed");
-	j += sprintf(message+j, "%d \r\n", RxData[4]);
+	canData=controller.ParseData(RxData, RxHeader);
 
-	HAL_UART_Transmit(&huart1,(uint8_t *)message,strlen(message),100);
+	int j = 0;
+	j = sprintf(message, "%x ", canData.Address);
+	j += sprintf(message + j, "%d ", canData.leftValue);
+	j += sprintf(message + j, "%d \r\n", canData.rightValue);
+
+	HAL_UART_Transmit(&huart1, (uint8_t*) message, strlen(message), 100);
 }
 /* USER CODE END PFP */
 
@@ -111,12 +119,14 @@ int main(void) {
 
 	HAL_CAN_ActivateNotification(&hcan, CAN_IT_RX_FIFO0_MSG_PENDING);
 
+	controller.Init(&hcan);
+
 	TxHeader.DLC = 2;
 	TxHeader.IDE = CAN_ID_STD;
 	TxHeader.RTR = CAN_RTR_DATA;
 	TxHeader.StdId = 0x000;
 
-	uint8_t reset[] = { 01, 82 };
+	uint8_t reset[] = { 82, 01 };
 	HAL_CAN_AddTxMessage(&hcan, &TxHeader, reset, &TxMailbox);
 	uint8_t operationalmode[] = { 01, 01 };
 	//uint8_t enablemotor[] = { 0x2B, 0x40, 0x60, 0x00, 0x06, 0x00, 0x00, 0x00 };// enable motor
@@ -142,11 +152,13 @@ int main(void) {
 		/* USER CODE BEGIN 3 */
 		TxHeader.DLC = 8;
 		TxHeader.StdId = 0x601;
-		uint8_t speed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
+		uint8_t speed[] = { 0x40, 0x6C, 0x60, 0x03, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
 		HAL_CAN_AddTxMessage(&hcan, &TxHeader, speed, &TxMailbox);
+
 		//HAL_UART_Transmit(&huart1, "Test\r\n", 8, 100);
 		//printf("Test\r\n");
-		HAL_Delay(1000);
+
+		HAL_Delay(1);
 	}
 	/* USER CODE END 3 */
 }
