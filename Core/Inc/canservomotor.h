@@ -13,9 +13,20 @@ public:
 	void StartCommand();
 	void GetVelocity();
 	void Init(CAN_HandleTypeDef *hcan);
+	void Run();
+	void Enable();
+	void Stop();
+	void SetMode(bool synchronous,int mode);
+	void SetParameters(int32_t acceleration[], int32_t deceleration[],int32_t velocity[],int32_t position[],int32_t torque[]);
 	
 	double LeftVelocity;
 	double RightVelocity;
+	bool SynchronousMode;
+	int ControlMode;
+	
+	int32_t CommandVelocity[2];
+	int32_t CommandPosition[2];
+	int32_t CommandTorque[2];
 
 private:
 	uint8_t motorID;

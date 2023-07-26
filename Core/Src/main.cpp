@@ -125,6 +125,12 @@ int main(void) {
 	controller.Reset();
 	controller.StartCommand();
 
+//	controller.SetMode(false, 0);
+//	int32_t a[2]={0,0};
+//	controller.SetParameters(a,a,a,a,a);
+//	controller.Enable();
+	controller.Run();
+
 //	TxHeader.DLC = 2;
 //	TxHeader.IDE = CAN_ID_STD;
 //	TxHeader.RTR = CAN_RTR_DATA;
@@ -156,12 +162,15 @@ int main(void) {
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		TxHeader.DLC = 8;
-		TxHeader.StdId = 0x601;
-		uint8_t lspeed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
-		HAL_CAN_AddTxMessage(&hcan, &TxHeader, lspeed, &TxMailbox);
-		uint8_t rspeed[] = { 0x40, 0x6C, 0x60, 0x02, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
-		HAL_CAN_AddTxMessage(&hcan, &TxHeader, rspeed, &TxMailbox);
+		controller.GetVelocity();
+
+
+//		TxHeader.DLC = 8;
+//		TxHeader.StdId = 0x601;
+//		uint8_t lspeed[] = { 0x40, 0x6C, 0x60, 0x01, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
+//		HAL_CAN_AddTxMessage(&hcan, &TxHeader, lspeed, &TxMailbox);
+//		uint8_t rspeed[] = { 0x40, 0x6C, 0x60, 0x02, 0x00, 0x00, 0x00, 0x00 };// set heart beat rate
+//		HAL_CAN_AddTxMessage(&hcan, &TxHeader, rspeed, &TxMailbox);
 
 		//HAL_UART_Transmit(&huart1, "Test\r\n", 8, 100);
 		//printf("Test\r\n");

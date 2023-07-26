@@ -3,6 +3,11 @@
 ../Core/Src/canservomotor.cpp:11:6:void CANServoMotor::Reset()	24	static
 ../Core/Src/canservomotor.cpp:21:6:void CANServoMotor::Init(CAN_HandleTypeDef*)	16	static
 ../Core/Src/canservomotor.cpp:25:6:void CANServoMotor::StartCommand()	24	static
-../Core/Src/canservomotor.cpp:37:6:void CANServoMotor::GetVelocity()	24	static
-../Core/Src/canservomotor.cpp:44:21:CANServoMotor::Data CANServoMotor::ParseData(uint8_t*, CAN_RxHeaderTypeDef&)	32	static
-../Core/Src/canservomotor.cpp:61:6:bool CANServoMotor::parseVelocity(uint8_t*, int&, int&)	24	static
+../Core/Src/canservomotor.cpp:37:6:void CANServoMotor::GetVelocity()	32	static
+../Core/Src/canservomotor.cpp:46:21:CANServoMotor::Data CANServoMotor::ParseData(uint8_t*, CAN_RxHeaderTypeDef&)	32	static
+../Core/Src/canservomotor.cpp:63:6:bool CANServoMotor::parseVelocity(uint8_t*, int&, int&)	24	static
+../Core/Src/canservomotor.cpp:85:6:void CANServoMotor::Run()	104	static
+../Core/Src/canservomotor.cpp:163:6:void CANServoMotor::Enable()	40	static
+../Core/Src/canservomotor.cpp:176:6:void CANServoMotor::Stop()	24	static
+../Core/Src/canservomotor.cpp:185:6:void CANServoMotor::SetMode(bool, int)	40	static
+../Core/Src/canservomotor.cpp:213:6:void CANServoMotor::SetParameters(int32_t*, int32_t*, int32_t*, int32_t*, int32_t*)	56	static
