@@ -57,7 +57,7 @@ uint8_t RxData[8];
 
 uint32_t TxMailbox;
 
-char message[100];
+char message[50];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,20 +66,31 @@ static void MX_GPIO_Init(void);
 static void MX_CAN_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
+void floatToTwoInts(float floatValue, int *integerPart, int *fractionalPart) {
+    *integerPart = (int)floatValue;
+    *fractionalPart = (int)((floatValue - *integerPart) * 100); // Assuming two decimal places
+}
+
+
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData);
 
 	canData=controller.ParseData(RxData, RxHeader);
 
 	int j = 0;
+	int integerPart, fractionalPart;
+	floatToTwoInts(controller.LeftVelocity, &integerPart, &fractionalPart);
+
 	j = sprintf(message, "%x ", canData.Address);
-	j += sprintf(message + j, "%.2f ", controller.LeftVelocity);
+	j += sprintf(message+j,  "%d.%02d ", integerPart, fractionalPart);
 	j += sprintf(message + j, "%.2f ", controller.RightVelocity);
 	j += sprintf(message + j, "%d ", canData.leftValue);
 	j += sprintf(message + j, "%d \r\n", canData.rightValue);
 
 	HAL_UART_Transmit(&huart1, (uint8_t*) message, strlen(message), 100);
 }
+
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -124,12 +135,13 @@ int main(void) {
 	controller.Init(&hcan);
 	controller.Reset();
 	controller.StartCommand();
-
+	controller.Stop();
 //	controller.SetMode(false, 0);
 //	int32_t a[2]={0,0};
 //	controller.SetParameters(a,a,a,a,a);
 //	controller.Enable();
-	controller.Run();
+	//controller.Run();
+	//controller.Stop();
 
 //	TxHeader.DLC = 2;
 //	TxHeader.IDE = CAN_ID_STD;
@@ -175,7 +187,7 @@ int main(void) {
 		//HAL_UART_Transmit(&huart1, "Test\r\n", 8, 100);
 		//printf("Test\r\n");
 
-		HAL_Delay(10);
+		HAL_Delay(1);
 	}
 	/* USER CODE END 3 */
 }

@@ -72,13 +72,17 @@ bool CANServoMotor::parseVelocity(uint8_t *rxData, int &leftVelocity,
 				this->RightVelocity=((static_cast<int32_t>(rxData[7]) << 24) | (rxData[6] << 16)
 						| (rxData[5] << 8) | rxData[4])*0.1;
 				break;
+			default:
+				this->LeftVelocity=888;
+				this->RightVelocity=888;
+				break;
 		}
-		leftVelocity=0;
-		rightVelocity=0;
+		leftVelocity=999;
+		rightVelocity=999;
 	} else {
 		// Invalid data length, set default values
-		leftVelocity = 0;
-		rightVelocity = 0;
+		leftVelocity = 999;
+		rightVelocity = 999;
 	}
 }
 
